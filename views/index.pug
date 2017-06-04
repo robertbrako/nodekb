@@ -1,0 +1,8 @@
+extends layout
+
+block content
+    h1 #{title}
+    ul
+    each article, i in articles
+        //equals must be attached to var!  And line comments must be on own line.
+        li= article.title
