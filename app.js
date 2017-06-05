@@ -32,6 +32,9 @@ app.set('view engine', 'pug');
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
+//Set public folder to serve static files
+app.use(express.static(path.join(__dirname, 'public')));
+
 //Home route
 app.get('/', function(req, res) {
     //read from Article table with empty search params
@@ -44,6 +47,14 @@ app.get('/', function(req, res) {
                 articles:articles
             });
         }
+    });
+});
+
+app.get('/article/:id', function(req, res) {
+    Article.findById(req.params.id, function(err, article) {
+        res.render('article', {
+            article:article
+        });
     });
 });
 
@@ -76,3 +87,16 @@ app.post('/articles/add', function(req, res) {
 app.listen('8080', function() {
     console.log('Server started on p 8080 (as far as container knows)');
 });
+/* notes: we've also done:
+ apt-get install nodejs
+ apt-get install git
+ apt-get install npm
+    npm install --save express
+    npm install --save pug
+    npm install --save mongoose
+    npm install --save body-parser
+    npm install -g nodemon
+    npm install -g bower
+        bower install bootstrap --allow-root
+
+*/
