@@ -50,6 +50,7 @@ app.get('/', function(req, res) {
     });
 });
 
+//Get single article
 app.get('/article/:id', function(req, res) {
     Article.findById(req.params.id, function(err, article) {
         res.render('article', {
@@ -82,7 +83,38 @@ app.post('/articles/add', function(req, res) {
     });
     console.log('Submitted');
     return;
-})
+});
+
+//Edit existing article
+app.get('/article/edit/:id', function(req, res) {
+    Article.findById(req.params.id, function(err, article) {
+        res.render('edit_article', {
+            title:'Edit Article',
+            article:article
+        });
+    });
+});
+
+//Update Submit POST Route
+app.post('/articles/edit/:id', function(req, res) {
+    var article = new Article();
+    article.title = req.body.title;
+    article.author = req.body.author;
+    article.body = req.body.body;
+
+    //update db: notice Article.update instead of article.save
+    var query = {_id:req.params.id};
+    Article.update(query, article, function(err) {
+        if (err) {
+            console.log(err);
+            return;
+        } else {
+            res.redirect('/');
+        }
+    });
+    console.log('Submitted');
+    return;
+});
 
 app.listen('8080', function() {
     console.log('Server started on p 8080 (as far as container knows)');
