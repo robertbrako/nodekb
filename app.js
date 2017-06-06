@@ -3,6 +3,10 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const session = require('express-session');
+const messages = require('express-messages');
+const connectFlash = require('connect-flash');
+const expressValidator = require('express-validator');
 
 //setup db
 mongoose.connect('mongodb://192.168.1.190:27024/nodekb');
@@ -34,6 +38,39 @@ app.use(bodyParser.json());
 
 //Set public folder to serve static files
 app.use(express.static(path.join(__dirname, 'public')));
+
+//express-session middleware
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true,
+    //cookie: { secure: true }//removed to allow the flash functionality
+}));
+
+//express-messages middleware
+app.use(connectFlash());
+app.use(function (req, res, next) {
+    res.locals.messages = messages(req, res);
+    next();
+});
+
+//express-validator
+app.use(expressValidator({
+    errorFormatter: function(param, msg, value) {
+        var namespace = param.split('.'),
+        root = namespace.shift(),
+        formParam = root;
+
+        while(namespace.length) {
+            formParam += '[' + namespace.shift() + ']';
+        }
+        return {
+            param : formParam,
+            msg : msg,
+            value : value
+        };
+    }
+}));
 
 //Home route
 app.get('/', function(req, res) {
@@ -78,6 +115,7 @@ app.post('/articles/add', function(req, res) {
             console.log(err);
             return;
         } else {
+            req.flash('success', 'Article Added');
             res.redirect('/');
         }
     });
@@ -110,8 +148,8 @@ app.post('/articles/edit/:id', function(req, res) {
             res.end('500');
             return;
         } else {
+            req.flash('success', 'Article Updated');
             res.redirect('/');
-            console.log('Edit success');
         }
     });
     console.log('Submitted');
@@ -143,5 +181,10 @@ app.listen('8080', function() {
     npm install -g nodemon
     npm install -g bower
         bower install bootstrap --allow-root
+    npm install --save
+        express-messages
+        express-session
+        connect-flash
+        expressvalidator
 
 */
