@@ -103,6 +103,20 @@ app.get('/articles/add', function(req, res) {
 });
 
 app.post('/articles/add', function(req, res) {
+    req.checkBody('title', 'Title is required').notEmpty();
+    req.checkBody('author', 'Author is required').notEmpty();
+    req.checkBody('body', 'Body is required').notEmpty();
+
+    //Get Errors
+    var errors = req.validationErrors();
+    if (errors) {
+        res.render('add_article', {
+            title:'Add Article',
+            errors:errors
+        });
+        return;
+    }
+
     var article = new Article();
     //time for another dependency (body-parser)
     article.title = req.body.title;
