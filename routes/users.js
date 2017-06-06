@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
+const passport = require('passport');
 
 //Bring in Article model
 var User = require('../models/user');
@@ -55,11 +56,27 @@ router.post('/register', function(req, res) {
                     return;
                 } else {
                     req.flash('success', 'User ' + newUser.username + ' now registered and can log in');
-                    res.redirect('/users/login');//to be continued
+                    res.redirect('/users/login');
                 }
             });
         });
     });
+});
+
+// Login Form
+router.get('/login', function(req, res) {
+    res.render('login', {
+        title:'Login',
+    });
+});
+
+//Login Process
+router.post('/login', function(req, res, next) {
+    passport.authenticate('local', {
+        successRedirect:'/',
+        failureRedirect:'/users/login',
+        failureFlash: true
+    })(req, res, next);
 });
 
 module.exports = router;

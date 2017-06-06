@@ -7,12 +7,15 @@ const session = require('express-session');
 const messages = require('express-messages');
 const connectFlash = require('connect-flash');
 const expressValidator = require('express-validator');
+const dbconfig = require('./config/database');
+const ppconfig = require('./config/passport');
+const passport = require('passport');
 //import service routes
 const articles = require('./routes/articles');
 const users = require('./routes/users');
 
 //setup db
-mongoose.connect('mongodb://192.168.1.190:27024/nodekb');
+mongoose.connect(dbconfig.database);
 var db = mongoose.connection;
 
 //check connection
@@ -74,6 +77,17 @@ app.use(expressValidator({
         };
     }
 }));
+
+//Passport config
+ppconfig(passport);
+app.use(passport.initialize());
+app.use(passport.session());
+
+//Global user variable setup via custom middleware
+app.get('*', function(req, res, next) {
+    res.locals.user = req.user || null;
+    next();
+});
 
 //Home route
 app.get('/', function(req, res) {
