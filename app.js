@@ -97,7 +97,7 @@ app.get('/article/edit/:id', function(req, res) {
 
 //Update Submit POST Route
 app.post('/articles/edit/:id', function(req, res) {
-    var article = new Article();
+    var article = {};
     article.title = req.body.title;
     article.author = req.body.author;
     article.body = req.body.body;
@@ -107,13 +107,26 @@ app.post('/articles/edit/:id', function(req, res) {
     Article.update(query, article, function(err) {
         if (err) {
             console.log(err);
+            res.end('500');
             return;
         } else {
             res.redirect('/');
+            console.log('Edit success');
         }
     });
     console.log('Submitted');
     return;
+});
+
+//Delete
+app.delete('/article/:id', function(req, res) {
+    var query = {_id:req.params.id};
+    Article.remove(query, function(err) {
+        if (err) {
+            console.log(err);
+        }
+        res.send('Success');
+    })
 });
 
 app.listen('8080', function() {
