@@ -7,7 +7,9 @@ const session = require('express-session');
 const messages = require('express-messages');
 const connectFlash = require('connect-flash');
 const expressValidator = require('express-validator');
+//import service routes
 const articles = require('./routes/articles');
+const users = require('./routes/users');
 
 //setup db
 mongoose.connect('mongodb://192.168.1.190:27024/nodekb');
@@ -89,6 +91,7 @@ app.get('/', function(req, res) {
 });
 
 app.use('/articles', articles);
+app.use('/users', users);
 
 app.listen('8080', function() {
     console.log('Server started on p 8080 (as far as container knows)');
