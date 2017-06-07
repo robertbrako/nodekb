@@ -14,8 +14,10 @@ const passport = require('passport');
 const articles = require('./routes/articles');
 const users = require('./routes/users');
 
-//setup db
-mongoose.connect(dbconfig.database);
+mongoose.connect(dbconfig.database, {
+    user: dbconfig.mongodbUser,
+    pass: dbconfig.mongodbPass
+});
 var db = mongoose.connection;
 
 //check connection
@@ -102,6 +104,10 @@ app.get('/', function(req, res) {
             });
         }
     });
+});
+
+app.get('/pagecount', function(req, res) {
+    res.send('1');
 });
 
 app.use('/articles', articles);
