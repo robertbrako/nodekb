@@ -2,4 +2,3 @@
 node_modules
 *.iml
 *.log
-public/bower_components
